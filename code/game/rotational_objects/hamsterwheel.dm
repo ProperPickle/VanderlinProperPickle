@@ -10,16 +10,18 @@
 	rotation_structure = TRUE
 	buckle_lying = FALSE
 	can_buckle = TRUE
-/*
+
 /obj/structure/hamsterwheel/LateInitialize()
 	. = ..()
+	/*
 	var/turf/open/water/river/water = get_turf(src)
 	if(!istype(water))
 		return
 	if(water.water_volume)
 		set_rotational_direction_and_speed(water.dir, 8)
 		set_stress_generation(1024)
-*/
+	*/
+
 /obj/structure/hamsterwheel/user_buckle_mob(mob/living/M, mob/user, check_loc)
 	if(!in_range(user, src) || user.stat != CONSCIOUS || !iscarbon(M))
 		return FALSE
@@ -41,6 +43,14 @@
 /obj/structure/hamsterwheel/relaymove(mob/user, direct/runDir)
 	to_chat(user, span_warning("I'm moving [runDir]."))
 
+/obj/structure/hamsterwheel/post_buckle_mob(mob/living/M)
+	if(has_buckled_mobs())
+		START_PROCESSING(SSobj, src)
+		M.set_mob_offsets("bed_buckle", _x = 0, _y = 10)
+
+/obj/structure/hamsterwheel/post_unbuckle_mob(mob/living/M)
+	STOP_PROCESSING(SSobj, src)
+	M.reset_offsets("bed_buckle")
 
 /*
 /obj/structure/hamsterwheel/update_animation_effect()
