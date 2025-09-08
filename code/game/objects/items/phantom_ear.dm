@@ -1,4 +1,4 @@
-/obj/structure/fake_machine/phantom_ear
+/obj/item/phantom_ear
 	name = "Phantom Ear"
 	desc = "An invisible phantom ear that you should be able to see."
 	var/chat_icon = 'icons/Phantom_Ear_Icon.dmi'
@@ -15,22 +15,31 @@
 	var/dictating = FALSE
 	*/
 
-/obj/structure/fake_machine/phantom_ear/Initialize()
+/obj/item/phantom_ear/Initialize()
 	. = ..()
 	ADD_TRAIT(src, TRAIT_RUNECHAT_HIDDEN, TRAIT_GENERIC)
 	become_hearing_sensitive()
 
-/obj/structure/fake_machine/phantom_ear/proc/setup(user)
+/obj/item/phantom_ear/proc/setup(user)
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		linked_human = H
 
-/obj/structure/fake_machine/phantom_ear/Destroy()
+/obj/item/phantom_ear/Destroy()
 	lose_hearing_sensitivity()
 	return ..()
 
+/obj/item/phantom_ear/attack_self(mob/user, params)
+	user.visible_message("<span class='warning'>[user] crushed the [src] in [user.p_their()] hand!</span>")
+	playsound(src, 'sound/vo/mobs/rat/rat_death.ogg', 100, FALSE, -1)
+	if(linked_human)
+		to_chat(linked_human, span_boldwarning("I feel a splitting pain in the side of my head, my phantom ear has been crushed!"))
+		linked_human.add_stress(/datum/stressevent/ear_crushed)
+		linked_human.emote("painscream")
+	linked_human = null
+	qdel(src)
 
-/obj/structure/fake_machine/phantom_ear/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, list/message_mods = list())
+/obj/item/phantom_ear/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, list/message_mods = list())
 	if(speaker == src)
 		return
 	if(get_dist(speaker.loc, loc)>2)
