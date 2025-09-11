@@ -97,7 +97,7 @@
 		M.stop_attack()
 	var/obj/item/I = M.get_active_held_item()
 	if(I)
-		user.mob.dropItemToGround(I, silent = FALSE)
+		user.mob.dropItemToGround(I, silent = FALSE, drop_source = "dropped")
 	return TRUE
 
 /datum/keybinding/living/sprint

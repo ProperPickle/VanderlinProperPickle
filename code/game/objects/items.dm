@@ -782,7 +782,7 @@ GLOBAL_DATUM_INIT(fire_overlay, /mutable_appearance, mutable_appearance('icons/e
 /obj/item/proc/talk_into(mob/M, input, channel, spans, datum/language/language)
 	return ITALICS | REDUCE_RANGE
 
-/obj/item/proc/dropped(mob/user, silent = FALSE)
+/obj/item/proc/dropped(mob/user, silent = FALSE, drop_source = "dropped")
 	SHOULD_CALL_PARENT(TRUE)
 
 	// Remove any item actions we temporary gave out.

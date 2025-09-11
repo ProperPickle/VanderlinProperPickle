@@ -266,8 +266,8 @@
  * * Will pass FALSE if the item can not be dropped due to TRAIT_NODROP via doUnEquip()
  * If the item can be dropped, it will be forceMove()'d to the ground and the turf's Entered() will be called.
 */
-/mob/proc/dropItemToGround(obj/item/I, force = FALSE, silent = TRUE)
-	. = doUnEquip(I, force, drop_location(), FALSE, silent = silent)
+/mob/proc/dropItemToGround(obj/item/I, force = FALSE, silent = TRUE, drop_source = "dropped")
+	. = doUnEquip(I, force, drop_location(), FALSE, silent = silent, drop_source = drop_source)
 	if(. && I) //ensure the item exists and that it was dropped properly.
 		I.pixel_x = I.base_pixel_x + rand(-6,6)
 		I.pixel_y = I.base_pixel_x + rand(-6,6)
@@ -285,7 +285,7 @@
 //DO NOT CALL THIS PROC
 //use one of the above 3 helper procs
 //you may override it, but do not modify the args
-/mob/proc/doUnEquip(obj/item/I, force, newloc, no_move, invdrop = TRUE, silent = FALSE) //Force overrides TRAIT_NODROP for things like wizarditis and admin undress.
+/mob/proc/doUnEquip(obj/item/I, force, newloc, no_move, invdrop = TRUE, silent = FALSE, drop_source = null) //Force overrides TRAIT_NODROP for things like wizarditis and admin undress.
 													//Use no_move if the item is just gonna be immediately moved afterward
 													//Invdrop is used to prevent stuff in pockets dropping. only set to false if it's going to immediately be replaced
 	if(!I) //If there's nothing to drop, the drop is automatically succesfull. If(unEquip) should generally be used to check for TRAIT_NODROP.
@@ -317,16 +317,16 @@
 				I.moveToNullspace()
 			else
 				I.forceMove(newloc)
-		I.dropped(src, silent)
+		I.dropped(src, silent, drop_source)
 	if(hud_used)
 		hud_used.throw_icon?.update_appearance()
 		hud_used.give_intent?.update_appearance()
 	update_a_intents()
-	SEND_SIGNAL(I, COMSIG_ITEM_POST_UNEQUIP, force, newloc, no_move, invdrop, silent)
+	SEND_SIGNAL(I, COMSIG_ITEM_POST_UNEQUIP, force, newloc, no_move, invdrop, silent, drop_source)
 	SEND_SIGNAL(src, COMSIG_MOB_UNEQUIPPED_ITEM, I, force, newloc, no_move, invdrop, silent)
 	return TRUE
 
-/mob/living/doUnEquip(obj/item/I, force, newloc, no_move, invdrop, silent)
+/mob/living/doUnEquip(obj/item/I, force, newloc, no_move, invdrop, silent, drop_source)
 	. = ..()
 	if(I)
 		if(IS_WEAKREF_OF(I, offered_item_ref))

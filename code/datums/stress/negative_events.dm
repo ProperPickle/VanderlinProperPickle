@@ -430,4 +430,4 @@
 /datum/stressevent/ear_crushed
 	timer = 2 MINUTES
 	stressadd = 1
-	desc = span_red("My phantom ear was crushed! There's a throbbing pain in my head.")
+	desc = span_red("My phantom ear was destroyed!")
