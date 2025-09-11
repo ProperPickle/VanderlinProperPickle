@@ -9,6 +9,7 @@
 	icon_state = "ear_ring"
 	invisibility = INVISIBLE
 	w_class = WEIGHT_CLASS_TINY
+	var/hear_radius = 2
 	var/mob/living/carbon/human/linked_human = null
 
 /obj/item/phantom_ear/Initialize()
@@ -33,12 +34,12 @@
 
 /obj/item/phantom_ear/attack_hand(mob/user)
 	.=..()
-	lose_hearing_sensitivity()
 	user.visible_message(span_warning("[user] thrusts [user.p_their()] hand into the air and clenches tightly, as a pale ear materializes in its grasp!"))
 	playsound(src, 'sound/vo/mobs/rat/rat_life.ogg', 100, FALSE, -1)
 	name = "Phantom Ear"
 	desc = "A spectral fascimile of an ear that squirms in your hand."
 	icon_state = "round_round_ear"
+	hear_radius = 0
 	update_appearance()
 	invisibility = VISIBLE
 	if(linked_human)
@@ -55,7 +56,6 @@
 	if(QDELETED(src))
 		return
 	..()
-	message_admins("Phantom Ear Drop Proc, thrownby is [src.thrownby]")
 	if(drop_source == "dropped")
 		src.visible_message(span_warning("[user] drops the [src], and it shatters!"))
 		playsound(src, 'sound/magic/glass.ogg', 100, FALSE, -1)
@@ -65,7 +65,6 @@
 
 /obj/item/phantom_ear/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
 	..()
-	message_admins("Phantom Ear Throw Impact Proc")
 	src.visible_message(span_warning("The [src] shatters against the [hit_atom]!"))
 	playsound(src, 'sound/magic/glass.ogg', 100, FALSE, -1)
 	if(linked_human)
@@ -75,7 +74,7 @@
 /obj/item/phantom_ear/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, list/message_mods = list())
 	if(speaker == src)
 		return
-	if(get_dist(speaker.loc, loc)>2)
+	if(get_dist(speaker.loc, src.loc)>hear_radius)
 		return
 	if(!ishuman(speaker))
 		return
