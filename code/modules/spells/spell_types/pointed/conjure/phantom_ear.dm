@@ -22,7 +22,7 @@
 /datum/action/cooldown/spell/conjure/phantom_ear/post_summon(atom/summoned_object)
 	var first = TRUE
 	for(var/obj/item/phantom_ear/E in world)
-		if(E.linked_human == owner)
+		if(E.linked_living?.resolve() == owner)
 			to_chat(owner, span_notice("You close one ear to open another."))
 			qdel(E)
 			first = FALSE
